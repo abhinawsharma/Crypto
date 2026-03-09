@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMCryptoCore", "TMCryptoCore.csproj", "{36B42537-A5D4-4114-BF21-6A2ED8AD037E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClientCrypto", "..\TestClientCrypto\TestClientCrypto.csproj", "{7B2C4D4C-6EB6-4E1A-A528-F1BF64B1FB08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36B42537-A5D4-4114-BF21-6A2ED8AD037E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36B42537-A5D4-4114-BF21-6A2ED8AD037E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36B42537-A5D4-4114-BF21-6A2ED8AD037E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36B42537-A5D4-4114-BF21-6A2ED8AD037E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B2C4D4C-6EB6-4E1A-A528-F1BF64B1FB08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B2C4D4C-6EB6-4E1A-A528-F1BF64B1FB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B2C4D4C-6EB6-4E1A-A528-F1BF64B1FB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B2C4D4C-6EB6-4E1A-A528-F1BF64B1FB08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C9178BBD-1414-452A-A8D1-4B8525682F44}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://devops.globelifeinc.com/projects
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\TestClientCrypto\\TestClientCrypto.csproj
+		SccProjectName1 = ../TestClientCrypto
+		SccLocalPath1 = ..\\TestClientCrypto
+		SccProjectUniqueName2 = TMCryptoCore.csproj
+		SccLocalPath2 = .
+	EndGlobalSection
+EndGlobal

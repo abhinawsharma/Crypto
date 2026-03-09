@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\TFS2022\TMK AppDev\Applications\NETCoreWebAPI\TMCryptoCore\bin\Release\net5.0\publish\</_PublishTargetUrl>
+    <History>True|2022-05-09T16:07:48.3262403Z;</History>
+  </PropertyGroup>
+</Project>

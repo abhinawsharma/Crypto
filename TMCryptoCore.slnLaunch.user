@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "TMCryptoCore.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\TestClientCrypto\\TestClientCrypto.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
