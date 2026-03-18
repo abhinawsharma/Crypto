@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
-using System.IO;
+using System.Text;
 using TMCryptoCore.Model;
 using TMCryptoCore.DAL;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace TMCryptoCore.Controllers
 {
@@ -12,18 +13,27 @@ namespace TMCryptoCore.Controllers
     [ApiController]
     public class EncryptionController : ControllerBase
     {
-        TripleDES tripleDES = null;
+        // AES-256-GCM constants
+        private const int NonceSizeBytes = 12; // 96-bit nonce recommended for GCM
+        private const int TagSizeBytes = 16;   // 128-bit authentication tag
+
+        private readonly byte[] _key;
         private readonly TMCryptoContext _context;
-        public EncryptionController(TMCryptoContext context)
+
+        public EncryptionController(TMCryptoContext context, IConfiguration configuration)
         {
-            tripleDES = TripleDES.Create();
-            tripleDES.Key = new byte[] { 123, 32, 213, 242, 212, 32, 24, 67, 84, 224, 55, 212, 123, 121, 31, 32 };
-            tripleDES.IV = new byte[] { 122, 211, 32, 103, 200, 102, 87, 103 };
+            // Load the AES-256 key (32 bytes / 256 bits) from configuration
+            string keyBase64 = configuration["Encryption:Key"]
+                ?? throw new InvalidOperationException("Encryption:Key is not configured.");
+            _key = Convert.FromBase64String(keyBase64);
+            if (_key.Length != 32)
+                throw new InvalidOperationException("Encryption:Key must be a 32-byte (256-bit) AES key.");
 
             _context = context;
         }
+
         [Route("GlobeLife/Crypto/Encrypt/{*plainString}")]
-        public string Encrypt(string plainString,bool CheckSession)
+        public string Encrypt(string plainString, bool CheckSession)
         {
             try
             {
@@ -32,42 +42,38 @@ namespace TMCryptoCore.Controllers
                     //get the Auth tag from header
                     if (Request.Headers.ContainsKey("Auth"))
                     {
-                        // return "TMCrypto:Please provide a valid [Auth] value in the header";
-                        var check = CheckSessionTime(Request.Headers["Auth"]);//var check = CheckSessionTime("83D822D1-68A4-6BAE-065A-AD6F419D5FCE");
+                        var check = CheckSessionTime(Request.Headers["Auth"]);
                         if ("SUCCESS" != check) return check;
                     }
                 }
-                using (var encryptor = tripleDES.CreateEncryptor())
+
+                byte[] plainBytes = Encoding.UTF8.GetBytes(plainString);
+                byte[] nonce = new byte[NonceSizeBytes];
+                byte[] tag = new byte[TagSizeBytes];
+                byte[] ciphertext = new byte[plainBytes.Length];
+
+                // Use a unique random nonce for every encryption operation
+                RandomNumberGenerator.Fill(nonce);
+
+                using (var aesGcm = new AesGcm(_key, TagSizeBytes))
                 {
-                    byte[] encryptedData = null;
-                    using (var dataStream = new MemoryStream())
-                    {
-                        using (var encryptedStream = new CryptoStream(dataStream, encryptor, CryptoStreamMode.Write))
-                        {
-                            using (var theWriter = new StreamWriter(encryptedStream))
-                            {
-                                //Write the string to the memory stream
-                                theWriter.Write(plainString);
-                                //End the writing
-                                theWriter.Flush();
-                                encryptedStream.FlushFinalBlock();
-                                //Position back at start
-                                dataStream.Position = 0;
-                                encryptedData = new byte[dataStream.Length + 1]; 
-                                //Read data from memory
-                                dataStream.Read(encryptedData, 0, (int)dataStream.Length  + 1);
-                                //Convert to String
-                                return Convert.ToBase64String(encryptedData);
-                            }
-                        }
-                    }
+                    aesGcm.Encrypt(nonce, plainBytes, ciphertext, tag);
                 }
+
+                // Output format: nonce (12 bytes) + tag (16 bytes) + ciphertext
+                byte[] result = new byte[NonceSizeBytes + TagSizeBytes + ciphertext.Length];
+                Buffer.BlockCopy(nonce, 0, result, 0, NonceSizeBytes);
+                Buffer.BlockCopy(tag, 0, result, NonceSizeBytes, TagSizeBytes);
+                Buffer.BlockCopy(ciphertext, 0, result, NonceSizeBytes + TagSizeBytes, ciphertext.Length);
+
+                return Convert.ToBase64String(result);
             }
             catch (Exception ex)
             {
                 return "Exception:" + ex.Message;
             }
         }
+
         [Route("GlobeLife/Crypto/Decrypt/{*encryptedString}")]
         public string Decrypt(string encryptedString)
         {
@@ -75,28 +81,28 @@ namespace TMCryptoCore.Controllers
 
             try
             {
-                using (var dataStream = new MemoryStream())
-                {
-                    using (var decryptor = tripleDES.CreateDecryptor())
-                    {
-                        using (var encryptedStream = new CryptoStream(dataStream, decryptor, CryptoStreamMode.Write))
-                        {
-                            byte[] encryptedData = Convert.FromBase64String(encryptedString);
+                byte[] encryptedData = Convert.FromBase64String(encryptedString);
 
-                            //Write the decrypted data to the memory stream
-                            encryptedStream.Write(encryptedData, 0, encryptedData.Length  - 1); //to make compatible with VB COM+ code 
-                            encryptedStream.FlushFinalBlock();
-                            //Position back at start
-                            dataStream.Position = 0;
-                            long strLen = dataStream.Length;
-                            encryptedData = new byte[strLen];
-                            //Read decrypted data to byte()
-                            dataStream.Read(encryptedData, 0, (int)strLen);
-                            //Construct string from byte()
-                            return System.Text.Encoding.UTF8.GetString(encryptedData);
-                        }
-                    }
+                int ciphertextSize = encryptedData.Length - NonceSizeBytes - TagSizeBytes;
+                if (ciphertextSize < 0)
+                    throw new ArgumentException("Invalid encrypted data: payload is too short.");
+
+                byte[] nonce = new byte[NonceSizeBytes];
+                byte[] tag = new byte[TagSizeBytes];
+                byte[] ciphertext = new byte[ciphertextSize];
+                byte[] plaintext = new byte[ciphertextSize];
+
+                // Parse nonce + tag + ciphertext from the encrypted data
+                Buffer.BlockCopy(encryptedData, 0, nonce, 0, NonceSizeBytes);
+                Buffer.BlockCopy(encryptedData, NonceSizeBytes, tag, 0, TagSizeBytes);
+                Buffer.BlockCopy(encryptedData, NonceSizeBytes + TagSizeBytes, ciphertext, 0, ciphertextSize);
+
+                using (var aesGcm = new AesGcm(_key, TagSizeBytes))
+                {
+                    aesGcm.Decrypt(nonce, ciphertext, tag, plaintext);
                 }
+
+                return Encoding.UTF8.GetString(plaintext);
             }
             catch (Exception ex)
             {
@@ -104,8 +110,7 @@ namespace TMCryptoCore.Controllers
             }
         }
 
-
-        [Route("GlobeLife"),HttpGet]
+        [Route("GlobeLife"), HttpGet]
         public string Get()
         {
             return "Welcome to Globe Life!";
