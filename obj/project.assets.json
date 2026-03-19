@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net5.0": {
+    "net8.0": {
       "Microsoft.CSharp/4.5.0": {
         "type": "package",
         "compile": {
@@ -5883,41 +5883,34 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net5.0": [
+    "net8.0": [
       "Microsoft.EntityFrameworkCore.SqlServer >= 5.0.12"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\axsharma\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/tmp/codeql-scratch-2ba3cdea97aa1d1a/dbs/csharp/working/packages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\TFS2022\\TMK AppDev\\Applications\\NETCoreWebAPI\\TMCryptoCore\\TMCryptoCore.csproj",
+      "projectUniqueName": "/home/runner/work/Crypto/Crypto/TMCryptoCore.csproj",
       "projectName": "TMCryptoCore",
-      "projectPath": "C:\\TFS2022\\TMK AppDev\\Applications\\NETCoreWebAPI\\TMCryptoCore\\TMCryptoCore.csproj",
-      "packagesPath": "C:\\Users\\axsharma\\.nuget\\packages\\",
-      "outputPath": "C:\\TFS2022\\TMK AppDev\\Applications\\NETCoreWebAPI\\TMCryptoCore\\obj\\",
+      "projectPath": "/home/runner/work/Crypto/Crypto/TMCryptoCore.csproj",
+      "packagesPath": "/tmp/codeql-scratch-2ba3cdea97aa1d1a/dbs/csharp/working/packages",
+      "outputPath": "/home/runner/work/Crypto/Crypto/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\axsharma\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/runner/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "net5.0"
+        "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "projectReferences": {}
         }
       },
@@ -5934,8 +5927,8 @@
       "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
-      "net5.0": {
-        "targetAlias": "net5.0",
+      "net8.0": {
+        "targetAlias": "net8.0",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.SqlServer": {
             "target": "Package",
@@ -5953,6 +5946,20 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[8.0.23, 8.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[8.0.23, 8.0.23]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[8.0.23, 8.0.23]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
@@ -5961,7 +5968,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
